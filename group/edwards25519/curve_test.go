@@ -1,8 +1,10 @@
 package edwards25519
 
 import (
+	"bytes"
 	"testing"
 
+	"github.com/dedis/kyber/util/random"
 	"github.com/dedis/kyber/util/test"
 )
 
@@ -29,3 +31,21 @@ func BenchmarkPointBaseMul(b *testing.B) { groupBench.PointBaseMul(b.N) }
 func BenchmarkPointPick(b *testing.B)    { groupBench.PointPick(b.N) }
 func BenchmarkPointEncode(b *testing.B)  { groupBench.PointEncode(b.N) }
 func BenchmarkPointDecode(b *testing.B)  { groupBench.PointDecode(b.N) }
+
+func TestIssue70(t *testing.T) {
+	zeros := make([]byte, 32)
+	suite := NewAES128SHA256Ed25519()
+	rand := suite.Cipher([]byte(""))
+
+	fail := false
+	for i := 0; i < 100; i++ {
+		b := random.Bytes(32, rand)
+		if bytes.Equal(zeros, b) {
+			t.Logf("round %d: expected random bytes, got zeros", i)
+			fail = true
+		}
+	}
+	if fail {
+		t.FailNow()
+	}
+}
