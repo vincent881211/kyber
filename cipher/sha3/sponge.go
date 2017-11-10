@@ -7,6 +7,7 @@ package sha3
 import (
 	//"encoding/hex"
 	"encoding/binary"
+	"encoding/hex"
 
 	"github.com/dedis/kyber/cipher"
 )
@@ -18,6 +19,9 @@ const (
 
 	// stateLen is the total state length of SHA3 rate+capacity.
 	stateLen = 200
+
+	// debug prints?
+	debug = false
 )
 
 type sponge struct {
@@ -39,9 +43,10 @@ func (d *sponge) Clone() cipher.Sponge {
 }
 
 func (d *sponge) Transform(dst, src []byte) {
-
-	//println("Transform\n" + hex.Dump(src))
-	//odst := dst
+	odst := dst
+	if debug {
+		println("Transform\n" + hex.Dump(src))
+	}
 
 	a := d.a[:]
 	for len(src) > 0 {
@@ -59,7 +64,9 @@ func (d *sponge) Transform(dst, src []byte) {
 		dst = dst[8:]
 	}
 
-	//println("->\n" + hex.Dump(odst))
+	if debug {
+		println("->\n" + hex.Dump(odst))
+	}
 }
 
 // Create a Keccak sponge primitive with 256-bit capacity.
