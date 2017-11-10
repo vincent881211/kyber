@@ -179,25 +179,6 @@ func (sc *spongeCipher) Message(dst, src, key []byte) {
 	sc.padMessage()
 }
 
-func (sc *spongeCipher) special(domain byte, index int) {
-
-	// ensure buffer is non-full before changing domain-separator
-	rate := sc.rate
-	if sc.pos == rate {
-		sc.sponge.Transform(sc.buf, sc.buf[:rate])
-		sc.pos = 0
-	}
-
-	// set the temporary capacity-bytes domain-separation configuration
-	sc.setDomain(domain, index)
-
-	// process one special block
-	sc.padMessage()
-
-	// revert to the normal domain-separation configuration
-	sc.setDomain(domainPayload, 0)
-}
-
 func (sc *spongeCipher) clone() *spongeCipher {
 	nsc := *sc
 	nsc.sponge = sc.sponge.Clone()
