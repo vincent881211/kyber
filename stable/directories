@@ -24,7 +24,6 @@ util/encoding
 util/hash
 util/key
 util/random
-util/subtle
 util/test
 xof
 xof/blake
